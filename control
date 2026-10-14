@@ -1,0 +1,9 @@
+Package: com.kwarnu.welcome
+Name: Kwar Welcome
+Depends: mobilesubstrate (>= 0.9.5000), firmware (>= 12.0)
+Version: 1.0.0
+Architecture: iphoneos-arm
+Description: Beautiful Hello / Welcome dialog with credit to Kwar Nu.
+Maintainer: Kwar Nu
+Author: Kwar Nu
+Section: Tweaks
