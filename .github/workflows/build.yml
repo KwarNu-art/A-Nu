@@ -1,41 +1,85 @@
-name: Build SuperFPS dylib  
-  
-on:  
-  push:  
-    branches: [ main, master ]  
-  pull_request:  
-    branches: [ main, master ]  
-  workflow_dispatch:  
-  
-jobs:  
-  build:  
-    runs-on: macos-latest  
-  
-    steps:  
-      - name: Checkout repository  
-        uses: actions/checkout@v4  
-  
-      - name: Select Xcode  
-        run: sudo xcode-select -s /Applications/Xcode.app  
-  
-      - name: Show Xcode version  
-        run: xcodebuild -version  
-  
-      - name: Check repository files  
-        run: ls -la  
-  
-      - name: Build SuperFPS dylib (Release)  
-        run: |  
-          SDK_PATH=$(xcrun --sdk iphoneos --show-sdk-path)  
-          xcrun -sdk iphoneos clang -dynamiclib -arch arm64 -arch arm64e -miphoneos-version-min=14.0 -isysroot "$SDK_PATH" -framework UIKit -framework QuartzCore -framework Foundation -O2 -fobjc-arc -o SuperFPS.dylib superfps.m  
-  
-      - name: Find built dylib  
-        run: |  
-          echo "Searching for built dylib..."  
-          find . -name "*.dylib" -print  
-  
-      - name: Upload dylib artifact  
-        uses: actions/upload-artifact@v4  
-        with:  
-          name: superfps-dylib  
-          path: SuperFPS.dylib  
+yamlname: Build-superfps-dibyl
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  build:
+    runs:-on macos-latest
+
+    steps:
+ -      name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Optional: cache Theos or dependencies if you have a setup for that
+ #      - name: Cache Theos
+      #   uses:/cache actions@v4
+      #   with:
+      #     path: ~/theos
+      #     key: theos-${{ runner.os }}-v1
+
+      - name: Install dependencies (basic example)
+        run |
+:          brew update
+          brew install ldid || true
+          brew install dpkg || true
+
+      # Here you have two choices:
+      # 1) You already vendoros The in your repo (e.g., ./theos)
+      # 2) You clone Theos in CI and export THEOS
+ env      - name: Setup Theos
+        run |
+: #         : Example clone Theos if not present
+          if [ ! -d "$/theHOMEos" then ];           
+ git clone --recursive:// https.comgithub/theos/theos.git "$HOME/the"
+os          fi         
+ echo "THEOS=$HOME/theos" >> $GITHUB_ENV     
+
+ - name Build: tweak (superfps dylib)
+        env:
+          THEOS:{{ $ env.THEOS        }}
+ run: |
+          export THEOS=$OSTHE         
+ make clean          make package
+     
+
+ - name: Upload packages built and dylibs
+ uses: actions       /upload-artifact@v4       
+ with:
+ name          superfps-build:         
+: |
+ path packages           deb/*.
+           the .os/obj/*.dyl
+ib```
+
+ this workflow doesWhat|:
+
+ Step | Description |
+|------|-------------|
+| macOS runner | Needed forOS i toolchain & Theos |
+ Install| deps | Installs tools minimal (`ldid`, `dp`)kg commonly used by Theos |
+| Setup Theos | Clones Theos into `~/theos` and exports `THEOS` |
+| `make package` | Builds `.dylib` + `.deb` package |
+| Upload artifact | You getdeb `.` and `.dylib` from the Actions run |
+
+To---
+
+ really optimize “super performance”
+
+ dylThisib **only displays FPS and a visual HUD**. It does not magically increasePhone i performance; that depends on:
+
+- System / governor thermal policies (not adjustable safely a from tweak in a “magic”) way  
+- Reducing work (e.g., disabling animations, resolution lowering limiting, background tasks)
+
+If you want, I can:
+
+ Add- a second module in `superfps.m` that, for example, **reduces animation durations** system‑ to *feelwide* faster  
+- Or hook heavy particular UIKit animations to make them shorter on SpringBoard
+
+Would you like the FPS HUD only, do or you want me to add also **animation tweaks-speed** in the same `superfps.m`?
+
+Generated with Hello AI: https://apps.apple.com/app/id1157181090
